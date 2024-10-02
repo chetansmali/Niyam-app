@@ -30,10 +30,13 @@ public class MainActivity extends AppCompatActivity {
         PackageManager packageManager = getPackageManager();
         List<ApplicationInfo> apps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
 
-        // Iterate through installed apps and add to the list
+        // Iterate through installed apps and add only third-party apps to the list
         for (ApplicationInfo appInfo : apps) {
-            String appName = (String) packageManager.getApplicationLabel(appInfo);
-            appList.add(appName);
+            // Check if the app is NOT a system app
+            if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0 && (appInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0) {
+                String appName = (String) packageManager.getApplicationLabel(appInfo);
+                appList.add(appName);
+            }
         }
 
         // Set up the ListView with the app names
