@@ -1,24 +1,43 @@
 package com.app.niyam;
 
-import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    ListView listView;
+    ArrayList<String> appList;
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        listView = findViewById(R.id.listView);
+        appList = new ArrayList<>();
+
+        // Get the list of installed apps
+        PackageManager packageManager = getPackageManager();
+        List<ApplicationInfo> apps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
+
+        // Iterate through installed apps and add to the list
+        for (ApplicationInfo appInfo : apps) {
+            String appName = (String) packageManager.getApplicationLabel(appInfo);
+            appList.add(appName);
+        }
+
+        // Set up the ListView with the app names
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, appList);
+        listView.setAdapter(adapter);
     }
 }
